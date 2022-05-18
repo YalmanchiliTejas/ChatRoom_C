@@ -5,6 +5,7 @@
 #define CLOSESOCKET(s) (close(s))
 
 #define  ERROR_CODE (-1)
+#define CONNECTION_ERROR (-3)
 
 #include <string.h>
 #include <arpa/inet.h>
