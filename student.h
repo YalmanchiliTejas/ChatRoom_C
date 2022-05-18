@@ -1,8 +1,8 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-#define MAX_PASS_LEN (8)
-#define ERROR_CODE_STU (-2)
+#define MAX_PASS_LEN (9)
+#define ERROR_CODE_STU (-1)
 
 typedef struct student{
 
