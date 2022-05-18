@@ -1,19 +1,12 @@
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <libpq-fe.h>
 
 #include "student.h"
-#include "network.h"
+#include "postgres.h"
 
 #define QUIT (0)
 #define NEW_USER (1)
 #define EXISTING (2)
 #define ERROR (-2)
-
+#define 
 /*
  * Prints out the initial welocme Menu
  */
@@ -79,11 +72,23 @@
 
       fprintf(stderr, "There has been an error in connecting to a database\n");
 
-      PQfinish(conn);
+      FINISH(conn);
+      return CONNECTION_ERROR;
+      }
+    PGresult * res = PQexec(conn, "BEGIN");
+
+    if ( PQresultStatus(res) != PGRES_ COMMAND_OK) {
+
+
+      fprintf(stderr, "BEGIN command failed \n");
+      CLEAR(res);
+      FINSIH(conn);
       return CONNECTION_ERROR;
       }
 
-      
+  int rows = PQntuples(res);
+ 
+
 
 
 
