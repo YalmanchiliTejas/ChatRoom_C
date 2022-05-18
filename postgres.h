@@ -1,5 +1,9 @@
+
+
 #ifndef __POSTGRES_H__
 #define __POSTGRES_H__
+
+#include <pqlib-fe.h>
 
 #define CONNECTION_ERROR (-3)
 #define FINISH(C) (PQfinish(C))
