@@ -11,6 +11,8 @@
 #define NEW_USER (1)
 #define EXISTING (2)
 #define ERROR (-2)
+#define NON_EXIST (3)
+#define WRONG_PASS (4)
 
 /*
  * Prints out the initial welocme Menu
@@ -42,7 +44,7 @@
   * This function is when the user selects the login menu
   */
 
-  student_t*  login_menu() {
+  student_t *   login_menu(int * value) {
 
    char read[1024];
    printf("Enter Username:\n");
@@ -60,16 +62,16 @@
      getchar();
      pass[8] = '\0';
 
-     student_t *  new_student = malloc(sizeof(student_t));
-     assert(new_student != NULL);
-     new_student->username = malloc(strlen(read));
-     assert(new_student->username != NULL);
-     strcpy(new_student->username, read);
+    student_t * student = malloc(sizeof(student_t));
+     assert(student != NULL);
+     student->username = malloc(strlen(read));
+     assert(student->username != NULL);
+     strcpy(student->username, read);
 
-     new_student->username[sizeof(username) - 1] = '\0';
-     strcpy(new_student->password, pass);
+     student->username[sizeof(username) - 1] = '\0';
+     strcpy(student->password, pass);
 
-      new_student->password[sizeof(new_student->password) -1 ] = '\0';
+      student->password[sizeof(student->password) -1 ] = '\0';
 
       PGconn * conn = PQconnectdb("user = tejasyalamanchili dbname = new_student");
 
@@ -78,6 +80,7 @@
       fprintf(stderr, "%s\n", PQerrorMessage(conn));
 
       FINISH(conn);
+      *value = -1;
       return NULL;
       }
     PGresult * res = PQexec(conn , "SELECT * FROM new_students");
@@ -87,6 +90,7 @@
       fprintf(stderr, "%s\n", PQerrorMessage(conn));
       CLEAR(res);
       FINISH(conn);
+      *value = -1;
       return NULL;
       }
 
@@ -96,19 +100,39 @@
    CLEAR(res);
    if (rows == 0) {
 
-    return NULL;
+     *value = NEW_USER;
+    return  NULL;
     }
 
+    for(int i = 0; i < rows; i++) {
 
-      return new_student;
-      } /* login_menu */
+     if(strcmp(student->username, PQgetvalue(res, i , 1)) == 0) {
+
+       *value = EXISTING;
+  }
+
+     if(strcmp(student->password, PQgetvalue(res, i , 2)) == 0) {
+
+       *value = EXISTING;
+       } else {
+
+        *value = WRONG_PASS;
+        }
+
+}
+  if (*value == EXISTING) {
+
+     return student;
+     }
+     return NULL;
+     } /* login_menu */
 
 
  /*
   * This function enables a person to signup for the service
   */
 
- student_t * sign_up() {
+ student_t * sign_up(int * value2) {
 
   /* Stores the username */
 
@@ -161,6 +185,8 @@
 
   fprintf(stderr, "%s\n", PQerrorMessage(conn));
   FINISH(conn);
+
+  *value2 = -1;
   return NULL;
   }
 
@@ -181,6 +207,8 @@
 
    fprintf(stderr, "%s\n", PQerrorMessage(conn));
 
+   *value2 = -1;
+
    return NULL;
    }
 
@@ -191,13 +219,26 @@
   if (strcmp(student->username, PQgetvalue(res, i , 1) ) == 0) {
 
     fprintf(stderr, "There is already a user of this username\n");
+    *value2 = EXISTING;
 
-    return NULL;
-    }
+    } else {
+    *value2 = NON_EXIST;
+   }
    }
 
   CLEAR(res);
 
 
-return student;
-}
+  if (*value2 == NON_EXIST) {
+
+  return student;
+  }
+
+
+return NULL;
+
+}/* sign_up() */
+
+
+
+
