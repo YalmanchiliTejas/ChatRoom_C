@@ -312,3 +312,103 @@ int  sign_up(char * username, char * password) {
 
   } /* rio_readlineb() */
 
+
+  void add_student(student_t ** head, student_t * node) {
+
+  if (*head == NULL) {
+      *head = node;
+      (*head)->next = NULL;
+      return;
+      }
+
+   student_t * tail = *head;
+
+   while(tail->next != NULL) {
+
+    tail = tail->next;
+    }
+    tail->next = node;
+    node->next = NULL;
+    return;
+    }
+
+  int read_all_students() {
+
+ PGconn * conn = PQconnectdb("user=tejasyalamanchili dbname=new_student");
+
+ if (PQstatus(conn) == CONNECTION_BAD) {
+
+  fprintf(stderr,"%s\n", PQerrorMessage(conn));
+
+  FINISH(conn);
+  return -1;
+  }
+
+ PGresult * res = PQexec(conn, "SELECT * FROM chat");
+
+ if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+
+  fprintf(stderr,"%s\n", PQerrorMessage(conn));
+  CLEAR(res);
+  FINISH(conn);
+  return -1;
+  }
+
+  student_t * head = NULL;
+
+  int rows = PQntuples(res);
+
+  for(int i = 0; i < rows; i++) {
+
+   student_t * new_student = malloc(sizeof(student_t));
+   assert(new_student != NULL);
+   new_student->username = malloc(strlen(PQgetvalue(res, i , 1)));
+   assert(new_student->username != NULL);
+   strcpy(new_student->username , PQgetvalue(res, i , 1));
+    strcpy(new_student->password, PQgetvalue(res, i , 2));
+   new_student->major = malloc(strlen(PQgetvalue(res, i , 3)));
+   assert(new_student->major != NULL);
+   strcpy(new_student->major , PQgetvalue(res, i , 3));
+   new_student->id = i + 1;
+   add_student(&head, new_student);
+
+}
+return SUCCESS;
+} /* read_all_students() */
+
+ int delete_student(student_t ** head, student_t * node) {
+
+ assert(head != NULL);
+ assert(*head != NULL);
+ assert(node != NULL);
+
+ /* This loops till it comes to the head */
+
+ while((*head)->prev != NULL) {
+
+  *head = (*head)->prev;
+  }
+
+  student_t * temp  = *head; /* a temporary variable */
+
+   while(temp->next != NULL) {
+
+   if (strcmp(temp->username, node->username) == 0 ) {
+
+     temp->prev->next = temp->next;
+     temp->next->prev = temp->prev;
+     temp->next = NULL;
+     temp->prev = NULL;
+     free(temp->username);
+     temp->username = NULL;
+     free(temp->password);
+         free(temp->major);
+     temp->major = NULL;
+      free(temp);
+      temp = NULL;
+      return SUCCESS;
+      }
+      }
+      return NON_EXIST;
+      } 
+
