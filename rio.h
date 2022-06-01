@@ -2,6 +2,8 @@
 #define __RIO_H__
 
 #define MAX_SIZE (8192)
+#include "student.h"
+
 typedef struct rio{
 
  int rio_fd; // the file descriptor
@@ -15,11 +17,15 @@ typedef struct rio{
  } rio_t;
 
 
-size_t rio_readn(int , void * , size_t);
-size_t rio_written(int , void * , size_t);
+size_t readn(int , void * , size_t);
+size_t written(int , void * , size_t);
 void init(rio_t * , int );
-ssize_t rio_readnb(rio_t *rp, void *usrbuf, size_t n);
-ssize_t rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen);
-
+ssize_t readnb(rio_t *, void *, size_t );
+ssize_t readlineb(rio_t *, void *, size_t );
+int login_menu(char * , char * );
+int  sign_up(char * , char * );
+void add_student(student_t ** , student_t * );
+int read_all_students();
+int delete_student(student_t ** , student_t *);
 #endif
 

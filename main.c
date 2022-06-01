@@ -20,6 +20,7 @@
 
 /*
  * Prints out the initial welocme Menu
+ * remember to set the boolean value to true;
  */
 
 int login_menu(char * username, char * password) {
@@ -46,7 +47,7 @@ int login_menu(char * username, char * password) {
     fprintf(stderr, "%s\n", PQerrorMessage(conn));
     CLEAR(res);
     FINISH(conn);
-    return -1;
+    return NON_EXIST;
   }
 
   int rows = PQntuples(res);
@@ -261,7 +262,7 @@ int  sign_up(char * username, char * password) {
    * I will also try to understand it better :)
    */
 
-  size_t readnb(rio_t * rp , void * buffer, size_t len) {
+  ssize_t readnb(rio_t * rp , void * buffer, size_t len) {
 
     size_t nleft =len;
     ssize_t nread;
@@ -285,7 +286,7 @@ int  sign_up(char * username, char * password) {
    * I will also try to understand it better :)
    */
 
-  ssize_t rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen) {
+  ssize_t readlineb(rio_t *rp, void *usrbuf, size_t maxlen) {
     size_t n;
     ssize_t rc;
     char c, *bufp = usrbuf;
@@ -351,7 +352,7 @@ int  sign_up(char * username, char * password) {
   fprintf(stderr,"%s\n", PQerrorMessage(conn));
   CLEAR(res);
   FINISH(conn);
-  return -1;
+  return NEW_USER;
   }
 
   student_t * head = NULL;
@@ -410,5 +411,5 @@ return SUCCESS;
       }
       }
       return NON_EXIST;
-      } 
+      } /* delete_students() */
 
