@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-
+#include <stdint.h>
 
 #define SUCCESS (0)
 #define NEW_USER (1)
@@ -333,7 +333,7 @@ int  sign_up(char * username, char * password) {
     return;
     }
 
-  int read_all_students() {
+  int read_all_students(student_t ** head) {
 
  PGconn * conn = PQconnectdb("user=tejasyalamanchili dbname=new_student");
 
@@ -355,7 +355,7 @@ int  sign_up(char * username, char * password) {
   return NEW_USER;
   }
 
-  student_t * head = NULL;
+
 
   int rows = PQntuples(res);
 
@@ -371,7 +371,7 @@ int  sign_up(char * username, char * password) {
    assert(new_student->major != NULL);
    strcpy(new_student->major , PQgetvalue(res, i , 3));
    new_student->id = i + 1;
-   add_student(&head, new_student);
+   add_student(head, new_student);
 
 }
 return SUCCESS;
@@ -412,4 +412,6 @@ return SUCCESS;
       }
       return NON_EXIST;
       } /* delete_students() */
+
+
 

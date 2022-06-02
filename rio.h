@@ -25,7 +25,8 @@ ssize_t readlineb(rio_t *, void *, size_t );
 int login_menu(char * , char * );
 int  sign_up(char * , char * );
 void add_student(student_t ** , student_t * );
-int read_all_students();
+int read_all_students(student_t **);
 int delete_student(student_t ** , student_t *);
+
 #endif
 
