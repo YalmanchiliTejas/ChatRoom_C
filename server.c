@@ -16,6 +16,8 @@
 
 student_t * return_stu (char * username);
 
+int  head_back (student_t ** );
+
 student_t * head = NULL;
 
 time_t t;
@@ -143,6 +145,7 @@ int initiating(char * port) {
 
        if (strcmp(keyword, "l") == 0) {
 
+        head_back(&head);
         bytes = 0;
         if ( (bytes = readlineb(&rp, username, sizeof(username))) == -1 ) {
 
@@ -177,6 +180,7 @@ int initiating(char * port) {
       }
       else if (strcmp(keyword, "s") == 0) {
 
+        head_back(&head);
         bytes = 0;
       if ( (bytes = readlineb(&rp, username, sizeof(username) )) == -1) {
 
@@ -218,7 +222,22 @@ int initiating(char * port) {
       }
       else if (strcmp(keyword, "m") == 0) {
 
+     head_back(&head);
      bytes = 0;
+
+     student_t * temp =  head;
+     while(temp != NULL) {
+
+      if (temp->online) {
+
+       if ((bytes = written(fd, temp->username, strlen(temp->username))) < 0 ) {
+
+        return ERROR;
+        }
+        } else {
+        temp = temp->next;
+        }
+        }
 
    if ((bytes = readlineb(&rp, username, sizeof(username))) == -1 ) {
 
@@ -237,7 +256,7 @@ int initiating(char * port) {
      }
      else if (strcmp(keyword, "f") == 0) {
      bytes = 0;
-
+      head_back(&head);
      if ( (bytes = readlineb(&rp, major, sizeof(major))) == -1) {
 
       return ERROR;
@@ -265,6 +284,7 @@ int initiating(char * port) {
     else if (strcmp(keyword,"u") == 0) {
       keyword[0] = '\0';
      bytes = 0;
+     head_back(&head);
      if ((bytes = readlineb(&rp , keyword, sizeof(keyword))) == -1) {
 
        return ERROR;
@@ -433,4 +453,26 @@ int initiating(char * port) {
     }
    CLOSESOCKET(sock);
       return 0;
-    }
+    } /* main() */
+
+
+   /*
+    * This function returns back to the head pointer always
+    */
+
+    int  head_back(student_t ** head) {
+
+
+    if (*head == NULL) {
+        return NEW_USER;
+        }
+
+   student_t * temp = *head;
+
+   while (temp->prev != NULL) {
+
+     temp = temp->prev;
+     }
+     *head = temp;
+     return SUCCESS;
+     } /* head_back() */
